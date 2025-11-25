@@ -99,7 +99,7 @@ def train(args):
             torch.save(model.state_dict(), save_dir / hp['save_path'])
     
     # Final save
-    torch.save(model.state_dict(), save_dir / "final.pt")
+    torch.save(model.state_dict(), save_dir / f"{hp['save_path']}_final.pt")
     print(f"\n✅ Training complete! Model saved to {save_dir}")
 
 if __name__ == '__main__':
