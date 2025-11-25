@@ -19,3 +19,6 @@ hyperparams:
   val_interval: 5    # Validate every 5 epochs
   save_dir: 'checkpoints'
   save_path: 'yolov8n.pth'
+
+
+  

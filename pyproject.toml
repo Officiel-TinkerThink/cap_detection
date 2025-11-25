@@ -13,4 +13,5 @@ dependencies = [
     "pandas>=2.3.3",
     "tqdm>=4.67.1",
     "ultralytics>=8.3.231",
+    "wandb>=0.23.0",
 ]

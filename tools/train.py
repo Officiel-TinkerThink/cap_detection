@@ -4,10 +4,58 @@ from torch.utils.data import DataLoader
 from ultralytics.utils.loss import v8DetectionLoss
 from dataset.dataset import YOLODataset
 from pathlib import Path
+from typing_extensions import Dict, Any
+import Yolo
 import argparse
 import yaml
 import torch
+import os
 from types import SimpleNamespace
+import wandb
+
+class Trainer:
+  def __init__(self, config_path, wandb_project):
+    if os.path.exists(data_yaml):
+      self.data_yaml = data_yaml
+    else:
+      raise("File does not exist")
+    if os.path.exists(config_path):
+      self.config: Dict[str, Any] = yaml.safe_load(config_path)
+      self.train_config: Dict[str, Any] = config.get('train')
+      self.aug_config: Dict[str, Any] = config.get('aug')
+    else:
+      raise("File does not exist")
+    self.wandb_project = wandb_project
+
+  def train(self, run_name):
+    # inialize wandb run
+    wandb.init(
+      project=self.wandb_project,
+      config=self.config,
+      name=run_name
+      mode='online'
+    )
+
+    model = Yolo(self.config.get(['model'], 'yolo8n.pt'))
+
+    results = model.train(**config)
+    target = self.export(model, 'ncnn')
+
+    # export file as the output of wandb
+    wandb.log(f"Model Export Target: {target}")
+
+    # this is still questionable what is the function
+    return results.__dict__
+
+  def export(self, model, format=None):
+    if format is not None:
+      target = model.export(format)
+      log.info(f"Model Succesfully Exported")
+    else:
+      raise "Target format is not specified"
+    return target
+
+    
 
 def train(args):
     # Load config
