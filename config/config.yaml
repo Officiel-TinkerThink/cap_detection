@@ -1,0 +1,21 @@
+dataset_params:
+  img_path: './sample/'
+  imgsz: 640        # Resize to 640x640
+  flip_p: 0.5
+
+hyperparams:
+  # Core
+  num_epochs: 1
+  batch_size: 2
+  acc_steps: 4
+  
+  # Optimizer
+  lr: 0.001
+  optimizer: 'AdamW'
+  weight_decay: 0.01
+  
+  # Optional but helpful
+  imgsz: 640         # Resize to 640x640
+  val_interval: 5    # Validate every 5 epochs
+  save_dir: 'cap_detection'
+  save_path: 'yolov8n.pth'
