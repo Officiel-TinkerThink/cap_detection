@@ -17,7 +17,7 @@ dependencies = [
     "wandb>=0.23.0",
 ]
 
-[project.optional-dependencies]
+[dependencies-groups]
 dev = [
     "black>=24.0.0",
     "isort>=7.0.0",
