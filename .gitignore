@@ -6,10 +6,17 @@ dist/
 wheels/
 *.egg-info
 
+
 # Virtual environments
 .venv
 checkpoints/
 sample
 data
 
+# docker
+.Dockerfile
+
+# wandb
+wandb
+runs
 

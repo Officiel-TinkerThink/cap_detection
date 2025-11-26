@@ -1,7 +1,7 @@
 [project]
 name = "cap-detection"
 version = "0.1.0"
-description = "Add your description here"
+description = "Detecting bottle cap with bounding box and classified them into categories based on color"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -12,6 +12,59 @@ dependencies = [
     "opencv-contrib-python>=4.12.0.88",
     "pandas>=2.3.3",
     "tqdm>=4.67.1",
+    "typer>=0.20.0",
     "ultralytics>=8.3.231",
     "wandb>=0.23.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.0.0",
+    "isort>=5.12.0",
+    "pylint>=3.0.0",
+]
+
+[tool.setuptools]
+packages = ["bsort"]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+bsort = "bsort.cli:main"
+
+# -----------------------
+# LINTING CONFIGURATIONS
+# -----------------------
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.pytest_cache
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_first_party = ["bsort"]
+combine_as_imports = true
+
+[tool.pylint."MAIN"]
+ignore = ["build", "dist"]
+
+[tool.pylint."FORMAT"]
+max-line-length = 88
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "C0114", # missing-module-docstring
+    "C0115", # missing-class-docstring
+    "C0116", # missing-function-docstring
 ]

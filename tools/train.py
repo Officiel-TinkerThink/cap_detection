@@ -1,158 +1,57 @@
-from model.detection_model import get_detection_model
-from tqdm import tqdm
-from torch.utils.data import DataLoader
-from ultralytics.utils.loss import v8DetectionLoss
-from dataset.dataset import YOLODataset
-from pathlib import Path
 from typing_extensions import Dict, Any
-import Yolo
+from ultralytics import YOLO
 import argparse
 import yaml
-import torch
 import os
-from types import SimpleNamespace
 import wandb
 
 class Trainer:
   def __init__(self, config_path, wandb_project):
-    if os.path.exists(data_yaml):
-      self.data_yaml = data_yaml
-    else:
-      raise("File does not exist")
     if os.path.exists(config_path):
-      self.config: Dict[str, Any] = yaml.safe_load(config_path)
+      with open(config_path, 'r') as f:
+        config: Dict[str, Any] = yaml.safe_load(f)
+      # train config are contain of dynamic hyperparams namely epochs, batch, imgsz, others
       self.train_config: Dict[str, Any] = config.get('train')
-      self.aug_config: Dict[str, Any] = config.get('aug')
+      # aug config are contain of static augmentations params namely, hsv_h, hsv_s, hsv_v, others
+      self.aug_config: Dict[str, Any] = {} #config.get('aug')
     else:
-      raise("File does not exist")
+      raise ValueError("Config file does not exist")
     self.wandb_project = wandb_project
 
   def train(self, run_name):
     # inialize wandb run
     wandb.init(
       project=self.wandb_project,
-      config=self.config,
-      name=run_name
+      config=self.train_config,
+      name=run_name,
       mode='online'
     )
 
-    model = Yolo(self.config.get(['model'], 'yolo8n.pt'))
+    model = YOLO(self.train_config.get('model', 'yolo8n.pt'))
+    model.train(**self.train_config, **self.aug_config)
 
-    results = model.train(**config)
+    # Export the model into 'ncnn'
     target = self.export(model, 'ncnn')
 
     # export file as the output of wandb
-    wandb.log(f"Model Export Target: {target}")
+    wandb.log({"Model Exported Target": target})
+    wandb.finish()
 
-    # this is still questionable what is the function
-    return results.__dict__
-
-  def export(self, model, format=None):
-    if format is not None:
-      target = model.export(format)
-      log.info(f"Model Succesfully Exported")
-    else:
-      raise "Target format is not specified"
+  def export(self, model, format='ncnn', **kwargs):
+    try:
+      target = model.export(format=format, **kwargs)
+      print(f"Model Succesfully Exported")
+    except ValueError as e:
+      raise ValueError("Export failed")
     return target
-
-    
-
-def train(args):
-    # Load config
-    config_path = args.config_path
-    with open(config_path) as f:
-        config = yaml.safe_load(f)
-    
-    hp = config['hyperparams']
-    data_config = config['dataset_params']
-    device = torch.device(config.get('device', 'cpu'))
-    
-    # Create save directory
-    save_dir = Path(hp['save_dir'])
-    save_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Model
-    if args.checkpoint_path and Path(args.checkpoint_path).exists():
-        model = get_detection_model(num_classes=3, checkpoint_path=args.checkpoint_path)
-    else:
-        model = get_detection_model(num_classes=3, pretrained=True)
-    model = model.to(device)
-    model.train()
-    model.args = SimpleNamespace(
-        box=7.5, cls=0.5, dfl=1.5,
-        lr0=hp['lr'], lrf=0.01, imgsz=data_config['imgsz'],
-        augment=True
-    )
-    
-    # Dataset
-    train_dataset = YOLODataset(
-        img_path=data_config['img_path'],
-        imgsz=data_config['imgsz'],
-        augment=True,
-        hyp=data_config
-    )
-    
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=hp['batch_size'],
-        shuffle=True,
-        pin_memory=True,
-        collate_fn=YOLODataset.collate_fn
-    )
-    
-    # Loss & optimizer
-    criterion = v8DetectionLoss(model)
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=hp['lr'],
-        weight_decay=hp['weight_decay']
-    )
-
-    
-    # Training loop
-    for epoch in range(hp['num_epochs']):
-        pbar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{hp['num_epochs']}")
-        
-        for batch in pbar:
-            # ✅ Move ENTIRE batch dict to device
-            batch_device = {
-                'img': batch['img'].to(device, non_blocking=True).float() / 255.0,
-                'batch_idx': batch['batch_idx'].to(device, non_blocking=True),
-                'cls': batch['cls'].to(device, non_blocking=True),
-                'bboxes': batch['bboxes'].to(device, non_blocking=True)
-            }
-            
-            # Forward
-            optimizer.zero_grad()
-            preds = model(batch_device['img'])
-            loss_tensor, loss_components = criterion(preds, batch_device)
-
-            # ✅ Sum across loss types to get scalar
-            total_loss = loss_tensor.sum()  # box + cls + dfl
-
-            # Backward & step
-            total_loss.backward()
-            optimizer.step()
-
-            # ✅ Log individual components (divide by batch_size for per-sample values)
-            pbar.set_postfix({
-                'loss': f"{total_loss.item():.4f}",
-                'box': f"{loss_components[0].item():.4f}",
-                'cls': f"{loss_components[1].item():.4f}",
-                'dfl': f"{loss_components[2].item():.4f}"
-            })
-        
-        # Save checkpoint
-        if (epoch + 1) % 10 == 0:
-            torch.save(model.state_dict(), save_dir / hp['save_path'])
-    
-    # Final save
-    torch.save(model.state_dict(), save_dir / f"{hp['save_path']}_final.pt")
-    print(f"\n✅ Training complete! Model saved to {save_dir}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config_path', type=str, default='config/config.yaml', help='Path to config file')
-    parser.add_argument('--checkpoint_path', type=str, default=None, help='Path to checkpoint file')
+    parser.add_argument('name', type=str, help='run name')
+    parser.add_argument('--config_path', type=str, default='configs/settings.yaml', help='Path to config path')
+    parser.add_argument('--project', type=str, default="cap_detection", help='Wandb project name')
     args = parser.parse_args()
-    train(args)
+    trainer = Trainer(args.config_path, args.project)
+    if args.name is None:
+      raise Error("Train run name does not specified")
+    trainer.train(args.name)

@@ -1,0 +1,40 @@
+name: CI/CD
+
+on: [push, pull_request]
+
+jobs:
+  lint-format-sort-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      - name: Black
+        run: uv run black --check .
+
+      - name: isort
+        run: uv run isort --check .
+
+      - name: pylint
+        run: uv run pylint bsort
+
+  build-docker:
+    needs: lint-format-sort-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: df -h  # Log disk space for debugging
+
+      # uv does not affect docker build unless you use uv inside the image
+      - run: docker build -t bsort:latest . --no-cache

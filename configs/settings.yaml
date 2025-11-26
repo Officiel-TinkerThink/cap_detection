@@ -1,0 +1,35 @@
+# Model & Training
+train:
+  model: yolo11n.pt
+  data: configs/data.yaml
+  epochs: 500
+  batch: 16
+  imgsz: 320
+  lr0: 0.001
+  optimizer: AdamW
+
+# Augmentation (critical for small data)
+aug:
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 10.0
+  translate: 0.1
+  scale: 0.5
+  shear: 2.0
+  perspective: 0.0
+  flipud: 0.0
+  fliplr: 0.5
+  mosaic: 1
+  mixup: 0.1
+
+# Inference
+infer:
+  model_path: runs/detect/train/weights/best.pt
+  conf: 0.25
+  iou: 0.45
+  output_dir: inference_results
+  class_names:
+    - light_blue
+    - dark_blue
+    - others
