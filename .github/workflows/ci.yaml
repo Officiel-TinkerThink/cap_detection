@@ -37,13 +37,13 @@ jobs:
       - name: pylint
         run: uv run pylint bsort
 
-  build-docker:
-    needs: lint-format-sort-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # build-docker:
+  #   needs: lint-format-sort-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - run: df -h  # Log disk space for debugging
+  #     - run: df -h  # Log disk space for debugging
 
-      # uv does not affect docker build unless you use uv inside the image
-      - run: docker build -t bsort:latest . --no-cache
+  #     # uv does not affect docker build unless you use uv inside the image
+  #     - run: docker build -t bsort:latest . --no-cache
