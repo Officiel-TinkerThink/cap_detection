@@ -1,6 +1,5 @@
 name: CI/CD
 
-# The events that trigger the workflow
 on:
   push:
     branches:
@@ -20,13 +19,15 @@ jobs:
         with:
           python-version: "3.12"
 
+      # --- CORRECTED CACHING STEP ---
       - name: Cache uv
         uses: actions/cache@v4
         with:
           path: ~/.cache/uv
-          key: uv-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+          # The key now includes BOTH pyproject.toml and uv.lock
+          key: uv-v1-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
           restore-keys: |
-            uv-${{ runner.os }}-
+            uv-v1-${{ runner.os }}-
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
@@ -42,14 +43,3 @@ jobs:
 
       - name: pylint
         run: uv run pylint bsort
-
-  # build-docker:
-  #   needs: lint-format-sort-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - run: df -h  # Log disk space for debugging
-
-  #     # uv does not affect docker build unless you use uv inside the image
-  #     - run: docker build -t bsort:latest . --no-cache
