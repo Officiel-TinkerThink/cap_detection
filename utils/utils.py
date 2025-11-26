@@ -1,10 +1,11 @@
-import torch
-import numpy as np
-import random
 import os
+import random
+
+import numpy as np
+import torch
 import yaml
-from models.yolov1 import YOLOV1
 from dataset.voc import VOCDataset
+from models.yolov1 import YOLOV1
 from torch.utils.data.dataloader import DataLoader
 
 

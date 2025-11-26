@@ -1,8 +1,10 @@
-from typing_extensions import Dict, Any
-from ultralytics import YOLO
 import argparse
-import yaml
 import os
+
+import yaml
+from typing_extensions import Any, Dict
+from ultralytics import YOLO
+
 import wandb
 
 

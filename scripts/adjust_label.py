@@ -1,11 +1,12 @@
+import argparse
+import glob
+import logging
+import os
+from pathlib import Path
+
 import cv2
 import numpy as np
 import pandas as pd
-import os
-from pathlib import Path
-import logging
-import glob
-import argparse
 
 
 class Relabeler:
