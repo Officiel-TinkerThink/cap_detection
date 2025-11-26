@@ -1,11 +1,10 @@
 import argparse
 import os
 
+import wandb
 import yaml
 from typing_extensions import Any, Dict
 from ultralytics import YOLO
-
-import wandb
 
 
 class Trainer:
