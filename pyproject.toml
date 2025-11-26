@@ -47,6 +47,8 @@ exclude = '''
   | \.pytest_cache
   | build
   | dist
+  | .venv
+  | venv
 )/
 '''
 

@@ -7,6 +7,7 @@ from models.yolov1 import YOLOV1
 from dataset.voc import VOCDataset
 from torch.utils.data.dataloader import DataLoader
 
+
 def get_iou(boxes1, boxes2):
     r"""
     IOU between two sets of boxes
@@ -23,12 +24,15 @@ def get_iou(boxes1, boxes2):
     x_right = torch.min(boxes1[..., 2], boxes2[..., 2])
     y_bottom = torch.min(boxes1[..., 3], boxes2[..., 3])
 
-    intersection_area = (x_right - x_left).clamp(min=0) * (y_bottom - y_top).clamp(min=0)
+    intersection_area = (x_right - x_left).clamp(min=0) * (y_bottom - y_top).clamp(
+        min=0
+    )
     union = area1.clamp(min=0) + area2.clamp(min=0) - intersection_area
-    iou = intersection_area / (union + 1E-6)
+    iou = intersection_area / (union + 1e-6)
     return iou
 
-def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult=None):
+
+def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method="area", difficult=None):
     # det_boxes = [
     #   {
     #       'person' : [[x1, y1, x2, y2, score], ...],
@@ -58,8 +62,10 @@ def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult
     for idx, label in enumerate(gt_labels):
         # Get detection predictions of this class
         cls_dets = [
-            [im_idx, im_dets_label] for im_idx, im_dets in enumerate(det_boxes)
-            if label in im_dets for im_dets_label in im_dets[label]
+            [im_idx, im_dets_label]
+            for im_idx, im_dets in enumerate(det_boxes)
+            if label in im_dets
+            for im_dets_label in im_dets[label]
         ]
 
         # cls_dets = [
@@ -79,7 +85,9 @@ def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult
         gt_matched = [[False for _ in im_gts[label]] for im_gts in gt_boxes]
         # Number of gt boxes for this class for recall calculation
         num_gts = sum([len(im_gts[label]) for im_gts in gt_boxes])
-        num_difficults = sum([sum(difficults_label[label]) for difficults_label in difficult])
+        num_difficults = sum(
+            [sum(difficults_label[label]) for difficults_label in difficult]
+        )
 
         tp = [0] * len(cls_dets)
         fp = [0] * len(cls_dets)
@@ -120,7 +128,7 @@ def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult
         recalls = tp / np.maximum(num_gts - num_difficults, eps)
         precisions = tp / np.maximum((tp + fp), eps)
 
-        if method == 'area':
+        if method == "area":
             recalls = np.concatenate(([0.0], recalls, [1.0]))
             precisions = np.concatenate(([0.0], precisions, [0.0]))
 
@@ -133,18 +141,20 @@ def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult
             i = np.where(recalls[1:] != recalls[:-1])[0]
             # Add the rectangular areas to get ap
             ap = np.sum((recalls[i + 1] - recalls[i]) * precisions[i + 1])
-        elif method == 'interp':
+        elif method == "interp":
             ap = 0.0
-            for interp_pt in np.arange(0, 1 + 1E-3, 0.1):
+            for interp_pt in np.arange(0, 1 + 1e-3, 0.1):
                 # Get precision values for recall values >= interp_pt
                 prec_interp_pt = precisions[recalls >= interp_pt]
 
                 # Get max of those precision values
-                prec_interp_pt= prec_interp_pt.max() if prec_interp_pt.size>0.0 else 0.0
+                prec_interp_pt = (
+                    prec_interp_pt.max() if prec_interp_pt.size > 0.0 else 0.0
+                )
                 ap += prec_interp_pt
             ap = ap / 11.0
         else:
-            raise ValueError('Method can only be area or interp')
+            raise ValueError("Method can only be area or interp")
         if num_gts > 0:
             aps.append(ap)
             all_aps[label] = ap
@@ -153,8 +163,3 @@ def compute_map(det_boxes, gt_boxes, iou_threshold=0.5, method='area', difficult
     # compute mAP at provided iou threshold
     mean_ap = sum(aps) / len(aps)
     return mean_ap, all_aps
-
-
-
-
-  
