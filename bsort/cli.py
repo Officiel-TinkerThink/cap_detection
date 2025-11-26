@@ -5,7 +5,7 @@ app = typer.Typer()
 
 @app.command()
 def train():
-    print("You are going training")
+    print("You are going training..")
 
 
 @app.command()
