@@ -50,6 +50,7 @@ exclude = '''
 profile = "black"
 line_length = 88
 known_first_party = ["bsort"]
+known_third_party = ["ultralytics", "wandb"]
 combine_as_imports = true
 
 [tool.pylint."MAIN"]
