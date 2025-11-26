@@ -143,7 +143,7 @@ requires-dist = [
     { name = "argparse", specifier = ">=1.4.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.0.0" },
     { name = "ipykernel", specifier = ">=7.1.0" },
-    { name = "isort", marker = "extra == 'dev'", specifier = ">=5.12.0" },
+    { name = "isort", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "opencv-contrib-python", specifier = ">=4.12.0.88" },
     { name = "pandas", specifier = ">=2.3.3" },
