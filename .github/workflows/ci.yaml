@@ -12,25 +12,12 @@ jobs:
   lint-format-sort-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Enable caching
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.12"
-
-      # --- CORRECTED CACHING STEP ---
-      - name: Cache uv
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/uv
-          # The key now includes BOTH pyproject.toml and uv.lock
-          key: uv-v1-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
-          restore-keys: |
-            uv-v1-${{ runner.os }}-
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
+          enable-cache: true
 
       - name: Install dependencies
         run: uv sync --group dev
