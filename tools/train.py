@@ -11,7 +11,7 @@ class Trainer:
     def __init__(self, config_path: str) -> None:
         """
         Initializes the Trainer class with the given configuration file and wandb project name.
-        
+
         Args:
             config_path (str): Path to the YAML configuration file.
         Raise:
@@ -21,7 +21,7 @@ class Trainer:
             with open(config_path, "r") as f:
                 config: Dict[str, Any] = yaml.safe_load(f)
             # wandb logging config for experiment tracking
-            self.wandb_logging: Dict[str, Any] = config.get('logging')
+            self.wandb_logging: Dict[str, Any] = config.get("logging")
             # train config are contain of dynamic hyperparams namely epochs, batch, imgsz, others
             self.train_config: Dict[str, Any] = config.get("train")
             # aug config are contain of static augmentations params namely, hsv_h, hsv_s, hsv_v, others
@@ -32,19 +32,21 @@ class Trainer:
     def train(self) -> None:
         """
         Executes the training pipeline with wandb logging and model export.
-        
+
         This method initializes a wandb run, loads and trains a YOLO model,
         exports it to the specified format, and logs the results.
-        
+
         """
         # inialize wandb run
         wandb.init(
-            project=self.wandb_logging.get("project",),
+            project=self.wandb_logging.get(
+                "project",
+            ),
             config=self.train_config,
             name=self.wandb_logging.get("run_name", "train"),
             mode="online",
         )
-        
+
         # train the model
         model = YOLO(self.train_config.get("model", "yolo8n.pt"))
         model.train(**self.train_config, **self.aug_config)
@@ -59,7 +61,7 @@ class Trainer:
     def export(self, model: YOLO, format: str = "ncnn", **kwargs) -> str:
         """
         Exports the trained model to a specified format.
-        
+
         Args:
             model (YOLO): The trained YOLO model instance to export.
             format (str, optional): Target export format. Defaults to "ncnn".
