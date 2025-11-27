@@ -1,9 +1,0 @@
-# what to do
-Must: doc string with type hint for every code
-
-1. exported file inference code
-2. docker file
-3. readme
-4. data splitter function
-5. cli functions for inference (done)
-6. the test file, and git actions for that test
