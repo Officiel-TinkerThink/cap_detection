@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  lint-format-sort-test:
+  code-screen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -22,11 +22,20 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
 
-      - name: Black
+      - name: formatting check with Black
         run: uv run black --check .
 
-      - name: isort
+      - name: sorting check isort
         run: uv run isort --check .
 
-      - name: pylint
+      - name: linter check pylint
         run: uv run pylint bsort
+
+      - name: pytest
+        run: uv run pytest
+
+  dockerization:
+    runs-on: ubuntu-latest
+    needs: code-screen
+
+

@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "ipykernel>=7.1.0",
+    "opencv-contrib-python>=4.12.0.88",
     "typer>=0.20.0",
     "ultralytics>=8.3.231",
     "wandb>=0.23.0",

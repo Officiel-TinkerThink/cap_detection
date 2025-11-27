@@ -1,4 +1,8 @@
 # Model & Training
+logging:
+  project: 
+  run_name:
+
 train:
   model: yolo11n.pt
   data: configs/data.yaml
