@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-import yaml
 from ultralytics import YOLO
+import yaml
 
 from tools.train import Trainer
 

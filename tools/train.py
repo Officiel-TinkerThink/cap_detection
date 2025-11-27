@@ -1,10 +1,11 @@
 import argparse
 import os
+from typing import Any, Dict
+
+from ultralytics import YOLO, settings
+import yaml
 
 import wandb
-import yaml
-from typing import Any, Dict
-from ultralytics import YOLO, settings
 
 
 class Trainer:
@@ -48,16 +49,16 @@ class Trainer:
         #     name=self.wandb_logging.get("run_name", "train"),
         #     job_type='training'
         # )
-        settings.update({'wandb':True})
+        settings.update({"wandb": True})
 
         # train the model
         model = YOLO(self.train_config.get("model", "yolo8n.pt"))
         model.train(
-          project=self.wandb_logging.get("project"),
-          name=self.wandb_logging.get("run_name", "train"),
-          **self.train_config,
-          **self.aug_config
-          )
+            project=self.wandb_logging.get("project"),
+            name=self.wandb_logging.get("run_name", "train"),
+            **self.train_config,
+            **self.aug_config,
+        )
 
         # Export the model into 'ncnn'
         target = self.export(model, "ncnn")
@@ -66,7 +67,7 @@ class Trainer:
         # wandb.log({"Model is succesfully exported to": target})
         wandb.finish()
 
-    def export(self, model: YOLO, export_format: str= "ncnn", **kwargs) -> str:
+    def export(self, model: YOLO, export_format: str = "ncnn", **kwargs) -> str:
         """
         Exports the trained model to a specified format.
 

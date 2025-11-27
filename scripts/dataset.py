@@ -1,9 +1,9 @@
 import glob
 import os
+from pathlib import Path
 import random
 import re
 import shutil
-from pathlib import Path
 from typing import Optional
 
 

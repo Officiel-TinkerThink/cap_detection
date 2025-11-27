@@ -1,6 +1,6 @@
 import glob
-import re
 from pathlib import Path
+import re
 
 
 class Relabeler:
