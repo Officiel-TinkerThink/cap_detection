@@ -55,7 +55,7 @@ uv run bsort infer --config configs/settings.yaml \
 ```bash
 uv run python tools/cpu_inference.py \
   --model-dir runs/detect/train2/weights/best_ncnn_model \
-  --image image.jpg --runs num_runs --num_warmup
+  --image image.jpg --runs num_runs --num_warmup num_warmup
 ```
 ---
 
