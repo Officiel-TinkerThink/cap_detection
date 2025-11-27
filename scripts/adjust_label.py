@@ -34,17 +34,17 @@ class Relabeler:
         if not match:
             print(f"Warning: Could not extract code from filename: {file_name}")
             return False
-        
+
         try:
             code = match.group(1)
             idx = self.code2idx[code]
-            
+
             # Rest of your existing code...
-            
+
         except (KeyError, FileNotFoundError) as e:
             print(f"Error processing {file_name}: {str(e)}")
             return False
-            
+
         with open(Path(self.source, file_name), "r", encoding="utf-8") as f_in:
             lines = f_in.readlines()
 
