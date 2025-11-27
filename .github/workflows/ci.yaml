@@ -26,7 +26,7 @@ jobs:
         run: uv run black --check .
 
       - name: sorting check isort
-        run: uv run isort --check .
+        run: uv run isort --check . -v
 
       - name: linter check pylint
         run: uv run pylint bsort
