@@ -32,8 +32,5 @@ infer:
   model_path: runs/detect/train/weights/best.pt
   conf: 0.25
   iou: 0.45
-  output_dir: inference_results
-  class_names:
-    - light_blue
-    - dark_blue
-    - others
+  project: "runs/inference"
+  name: predictions
