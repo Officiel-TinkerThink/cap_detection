@@ -1,13 +1,13 @@
 # Model & Training
 logging:
-  project: 
-  run_name:
+  project: bottle_cap_detection
+  run_name: train_b8_ep500_im320
 
 train:
   model: yolo11n.pt
   data: configs/data.yaml
-  epochs: 500
-  batch: 16
+  epochs: 100
+  batch: 8
   imgsz: 320
   lr0: 0.001
   optimizer: AdamW
@@ -29,8 +29,8 @@ aug:
 
 # Inference
 infer:
-  model_path: runs/detect/train/weights/best.pt
-  conf: 0.25
-  iou: 0.45
-  project: "runs/inference"
+  model_path: bottle_cap_detection/train_b8_ep500_im320/weights/best.pt
+  project: "bottle_cap_detection/train_b8_ep500_im320/"
   name: predictions
+  conf: 0.5
+  iou: 0.45

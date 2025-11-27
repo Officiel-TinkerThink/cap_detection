@@ -3,8 +3,8 @@ import os
 
 import wandb
 import yaml
-from typing_extensions import Any, Dict
-from ultralytics import YOLO
+from typing import Any, Dict
+from ultralytics import YOLO, settings
 
 
 class Trainer:
@@ -22,9 +22,11 @@ class Trainer:
                 config: Dict[str, Any] = yaml.safe_load(f)
             # wandb logging config for experiment tracking
             self.wandb_logging: Dict[str, Any] = config.get("logging")
-            # train config are contain of dynamic hyperparams namely epochs, batch, imgsz, others
+            # train config are contain of dynamic hyperparams namely epochs,
+            # batch, imgsz, others
             self.train_config: Dict[str, Any] = config.get("train")
-            # aug config are contain of static augmentations params namely, hsv_h, hsv_s, hsv_v, others
+            # aug config are contain of static augmentations params namely,
+            # hsv_h, hsv_s, hsv_v, others
             self.aug_config: Dict[str, Any] = {}  # config.get('aug')
         else:
             raise ValueError("Config file does not exist")
@@ -38,43 +40,49 @@ class Trainer:
 
         """
         # inialize wandb run
-        wandb.init(
-            project=self.wandb_logging.get(
-                "project",
-            ),
-            config=self.train_config,
-            name=self.wandb_logging.get("run_name", "train"),
-            mode="online",
-        )
+        # wandb.init(
+        #     project=self.wandb_logging.get(
+        #         "project",
+        #     ),
+        #     config=self.train_config,
+        #     name=self.wandb_logging.get("run_name", "train"),
+        #     job_type='training'
+        # )
+        settings.update({'wandb':True})
 
         # train the model
         model = YOLO(self.train_config.get("model", "yolo8n.pt"))
-        model.train(**self.train_config, **self.aug_config)
+        model.train(
+          project=self.wandb_logging.get("project"),
+          name=self.wandb_logging.get("run_name", "train"),
+          **self.train_config,
+          **self.aug_config
+          )
 
         # Export the model into 'ncnn'
         target = self.export(model, "ncnn")
 
         # export file as the output of wandb
-        wandb.log({"Model is succesfully exported to": target})
+        # wandb.log({"Model is succesfully exported to": target})
         wandb.finish()
 
-    def export(self, model: YOLO, format: str = "ncnn", **kwargs) -> str:
+    def export(self, model: YOLO, export_format: str= "ncnn", **kwargs) -> str:
         """
         Exports the trained model to a specified format.
 
         Args:
             model (YOLO): The trained YOLO model instance to export.
-            format (str, optional): Target export format. Defaults to "ncnn".
+            export_format (str, optional): Target export format. Defaults to "ncnn".
         Returns:
             str: Path to the exported model file.
         Raise:
             ValueError: If the model export process fails.
         """
         try:
-            target = model.export(format=format, **kwargs)
-            print(f"Model Succesfully Exported")
+            target = model.export(format=export_format, **kwargs)
+            print("Model Succesfully Exported")
         except ValueError as e:
-            raise ValueError("Export failed")
+            raise ValueError("Export failed") from e
         return target
 
 

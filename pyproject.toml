@@ -18,6 +18,7 @@ dev = [
     "black>=24.0.0",
     "isort>=7.0.0",
     "pylint>=3.0.0",
+    "pytest>=8.3.4",
 ]
 
 [tool.setuptools]
@@ -51,20 +52,30 @@ exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 88
-known_first_party = ["bsort"]
-known_third_party = ["ultralytics", "wandb"]
+known_first_party = ["bsort", "scripts", "tests", "tools"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
 combine_as_imports = true
+force_sort_within_sections = true
 
 [tool.pylint."MAIN"]
-ignore = ["build", "dist"]
+ignore = [".venv", "build", "dist", 'dist']
 
 [tool.pylint."FORMAT"]
 max-line-length = 88
 
-[tool.pylint."MESSAGES CONTROL"]
+[tool.pylint.'MESSAGES CONTROL']
 disable = [
-    "C0114", # missing-module-docstring
-    "C0115", # missing-class-docstring
-    "C0116", # missing-function-docstring
-    "C0415", # import-outside-toplevel
+    "C0301",  # Line too long
+    "C0103",  # Invalid name
+    "R0902",  # Too many instance attributes
+    "R0914",  # Too many local variables
+    "W0621",  # Redefining name from outer scope
+    "W1514",  # Using open without explicitly specifying an encoding
+    "E1101",  # Module has no member
+    "E0401",  # Unable to import
+    "W0612",  # Unused variable
+    "R1705",  # Unnecessary else after return
+    "C0114",  # Missing module docstring
+    "C0115",  # Missing class docstring
 ]

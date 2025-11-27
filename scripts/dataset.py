@@ -105,7 +105,9 @@ class DataSplitter:
             shutil.copy(lab_path, self.lab_val)
 
         print(
-            f"Splitting {len(trains)} files into train and {len(vals)} files into val"
+            f"Splitting {
+                len(trains)} files into train and {
+                len(vals)} files into val"
         )
 
 
