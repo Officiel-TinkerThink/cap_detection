@@ -48,6 +48,4 @@ COPY raw-250110_dc_s001_b2_15.jpg ./raw-250110_dc_s001_b2_15.jpg
 # Entry point (same as original)
 ENTRYPOINT ["bsort"]
 
-# Command to run when the container starts
-CMD ["infer", "--image", "./raw-250110_dc_s001_b2_15.jpg"]
 
