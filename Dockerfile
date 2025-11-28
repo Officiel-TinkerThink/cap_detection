@@ -4,29 +4,26 @@
 FROM python:3.12-slim AS builder
 WORKDIR /app
 
-# Install system dependencies + uv
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git curl libgl1 libglib2.0-0 && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install only what is absolutely required
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl git build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Make uv available in PATH (uv installs into /root/.local/bin)
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:${PATH}"
 
 # Copy dependency files
-COPY pyproject.toml ./
-COPY uv.lock ./
-COPY README.md ./
+COPY pyproject.toml uv.lock ./
 
-# Copy project source (similar to original)
+# Install deps into a wheelhouse (NO system install yet)
+RUN uv pip wheel . -w /tmp/wheels
+
+# Copy project files
 COPY bsort ./bsort
 COPY configs ./configs
 COPY tools ./tools
 COPY scripts ./scripts
-
-
-# Install dependencies + build wheels into /usr/local
-RUN uv pip install --system --no-cache .
 
 
 # ============================
@@ -35,17 +32,22 @@ RUN uv pip install --system --no-cache .
 FROM python:3.12-slim
 WORKDIR /app
 
-# Copy installed site-packages + binaries from builder
-COPY --from=builder /usr/local /usr/local
+# Install only runtime libs needed by your app (small!)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy minimal project files only
+# Copy wheels built earlier
+COPY --from=builder /tmp/wheels /tmp/wheels
+
+# Install deps from wheelhouse (fast + tiny footprint)
+RUN pip install --no-cache-dir /tmp/wheels/*
+
+# Copy project files
 COPY bsort ./bsort
 COPY configs ./configs
 COPY tools ./tools
 COPY scripts ./scripts
-COPY raw-250110_dc_s001_b2_15.jpg ./raw-250110_dc_s001_b2_15.jpg
+COPY raw-250110_dc_s001_b2_15.jpg .
 
-# Entry point (same as original)
 ENTRYPOINT ["bsort"]
-
-
