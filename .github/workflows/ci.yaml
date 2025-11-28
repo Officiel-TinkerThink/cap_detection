@@ -39,8 +39,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
-        - run: df -h  # Log disk space for debugging
-        - run: docker build -t bsort:latest . --no-cache  # No-cache to avoid large layers
+        - run: df -h  
+        - run: docker build -t bsort:latest . --no-cache 
 
 
 
