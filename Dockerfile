@@ -48,6 +48,5 @@ COPY bsort ./bsort
 COPY configs ./configs
 COPY tools ./tools
 COPY scripts ./scripts
-COPY raw-250110_dc_s001_b2_15.jpg .
 
 ENTRYPOINT ["bsort"]
