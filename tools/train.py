@@ -3,9 +3,8 @@ import os
 from typing import Any, Dict
 
 from ultralytics import YOLO, settings
-import yaml
-
 import wandb
+import yaml
 
 
 class Trainer:
