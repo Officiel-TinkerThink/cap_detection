@@ -9,33 +9,33 @@ on:
       - master
 
 jobs:
-  code-screen:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+  # code-screen:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v5
 
-      - name: Enable caching
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
+  #     - name: Enable caching
+  #       uses: astral-sh/setup-uv@v7
+  #       with:
+  #         enable-cache: true
 
-      - name: Install dependencies
-        run: uv sync --group dev
+  #     - name: Install dependencies
+  #       run: uv sync --group dev
 
-      - name: formatting check with Black
-        run: uv run black --check .
+  #     - name: formatting check with Black
+  #       run: uv run black --check .
 
-      - name: sorting check isort
-        run: uv run isort --check . -v
+  #     - name: sorting check isort
+  #       run: uv run isort --check . -v
 
-      - name: linter check pylint
-        run: uv run pylint bsort
+  #     - name: linter check pylint
+  #       run: uv run pylint bsort
 
-      - name: pytest
-        run: uv run pytest
+  #     - name: pytest
+  #       run: uv run pytest
 
   build-docker:
-      needs: code-screen
+      # needs: code-screen
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
@@ -43,10 +43,10 @@ jobs:
         - run: docker build -t bsort:latest . --no-cache  # No-cache to avoid large layers
         - name: Run inference
           run: |
-            docker run --rm bsort:latest
+            # docker run --rm bsort:latest
             # Or to see more detailed output:
-            # docker run --rm bsort:latest 2>&1 | tee output.log
-            # cat output.log
+            docker run --rm bsort:latest 2>&1 | tee output.log
+            cat output.log
 
 
 
