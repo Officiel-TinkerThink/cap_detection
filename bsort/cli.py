@@ -52,6 +52,8 @@ def infer(
     model = YOLO(model_path)
     model.predict(image, save=True, **infer_params)
 
+    print("Inference completed successfully")
+
 
 def main() -> None:
     """
