@@ -41,5 +41,12 @@ jobs:
         - uses: actions/checkout@v4
         - run: df -h  # Log disk space for debugging
         - run: docker build -t bsort:latest . --no-cache  # No-cache to avoid large layers
+        - name: Run inference
+          run: |
+            docker run --rm bsort:latest
+            # Or to see more detailed output:
+            # docker run --rm bsort:latest 2>&1 | tee output.log
+            # cat output.log
+
 
 
