@@ -78,6 +78,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "ipykernel" },
+    { name = "matplotlib" },
     { name = "ncnn" },
     { name = "opencv-contrib-python" },
     { name = "typer" },
@@ -96,6 +97,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ipykernel", specifier = ">=7.1.0" },
+    { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "ncnn", specifier = ">=1.0.20250916" },
     { name = "opencv-contrib-python", specifier = ">=4.12.0.88" },
     { name = "typer", specifier = ">=0.20.0" },

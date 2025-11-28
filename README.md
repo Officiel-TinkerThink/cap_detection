@@ -14,7 +14,7 @@ Computer Vision Project that is self-explained. Intended to train to detect the 
 ---
 
 ```
-**Best Model:** `runs/detect/train2/weights/best.pt` → **mAP@0.5 = 0.72**, **Latency (NCNN format): (11 +- 2) ms**
+**Best Model:** `bottle_cap_detection/train_b8_ep500_im320/weights/best.pt` → **mAP@0.5 = 0.995**, **Latency (NCNN format): (11 +- 2) ms**
 ```
 
 ### Best Perfomance Model Detail
@@ -23,8 +23,7 @@ Computer Vision Project that is self-explained. Intended to train to detect the 
 |-------------------------|--------------------|
 | Model                   | YOLOv11n           |
 | Image Size              | 320×320            |
-| mAP@0.5 (test set)      | **0.72**           |
-| mAP@0.5:0.95            | 0.48               |
+| mAP@0.5 (validation)      | **0.995**           |
 | Latency (NCNN)    | **(11 +-2) ms** (CPU)    |
 
 ---
@@ -69,16 +68,17 @@ Elapsed time --> (11 +- 2) miliseconds      # using NCNN format
 
 All experiments are tracked publicly on **Weights & Biases**:
 
-**Public Dashboard:** https://wandb.ai/spidiebot-personal/bottle_caps  
-**Best Run:** `train2_final`  
-**Key Observations:**
-- Heavy mosaic + HSV augmentation critical for small dataset
+**Public Dashboard:**  [wandb.ai/bottle_cap_detection](https://wandb.ai/bornouksyn497-universitas-gadjah-mada-library/bottle_cap_detection?nw=nwuserbornouksyn497)  
+**Best Run:** `train_b8_ep500_im320`  
+- `batch_size=8`
+- `epoch=500`
 - `imgsz=320` gives best speed/accuracy balance
 - `lr0=0.001`
+- `opt=adamW`
 
 ---
 
-**Future Improvement or Optimzation**
+**Future Improvement or Optimization**
 ```
 - Using more data would likely to improve performance (mAP or confidence level)
 - Size optimization & Latency time could be optimized using pruning, knowledge distillation, and quantization 

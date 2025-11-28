@@ -5,11 +5,6 @@ import cv2
 import ncnn
 import numpy as np
 
-# YOLO settings
-INPUT_SIZE = 320  # depends on your model (check Ultralytics export log)
-CONF_THRES = 0.25
-NMS_THRES = 0.45
-
 
 def load_ncnn_model(param_path: str, bin_path: str) -> ncnn.Net:
     """Load an NCNN model from .param and .bin files.
@@ -28,16 +23,17 @@ def load_ncnn_model(param_path: str, bin_path: str) -> ncnn.Net:
     return net
 
 
-def preprocess(image: np.ndarray) -> np.ndarray:
+def preprocess(image: np.ndarray, input_size: int) -> np.ndarray:
     """Resize and normalize an image for NCNN YOLO input.
 
     Args:
         image (np.ndarray): Original input image (HWC BGR format).
+        input_size (int): the size of input into the model
 
     Returns:
         np.ndarray: Preprocessed CHW float32 image normalized to [0, 1].
     """
-    img = cv2.resize(image, (INPUT_SIZE, INPUT_SIZE))
+    img = cv2.resize(image, (input_size, input_size))
     img = img.astype(np.float32)
     img = img / 255.0
     img = img.transpose(2, 0, 1)  # HWC → CHW
@@ -62,7 +58,11 @@ def xywh2xyxy(x: np.ndarray) -> np.ndarray:
 
 
 def run_inference(
-    model_dir: str, image_path: str, num_runs: int = 1000, num_warmups: int = 5
+    model_dir: str,
+    image_path: str,
+    num_runs: int = 1000,
+    num_warmups: int = 5,
+    input_size: int = 320,
 ):
     """Run NCNN YOLO inference multiple times and measure speed statistics.
 
@@ -75,15 +75,17 @@ def run_inference(
         image_path (str): Path to the input image for inference.
         num_runs (int, optional): Number of timed inference runs. Defaults to 1000.
         num_warmups (int, optional): Number of warm-up runs to stabilize performance. Defaults to 5.
+        input_size (int, optional): the size of input into the model. Defaults to 320.
 
     Prints:
         Max, Min, Avg, and Std (standard deviation) inference times in milliseconds.
     """
+
     param_path = os.path.join(model_dir, "model.ncnn.param")
     bin_path = os.path.join(model_dir, "model.ncnn.bin")
 
     img = cv2.imread(str(image_path))
-    img = preprocess(img)
+    img = preprocess(img, input_size)
 
     net = load_ncnn_model(param_path, bin_path)
 
@@ -118,6 +120,6 @@ def run_inference(
 
 
 if __name__ == "__main__":
-    model_dir = "runs/detect/train/weights/best_ncnn_model"
+    model_dir = "bottle_cap_detection/train_b8_ep500_im320/weights/best_ncnn_model"
     img_path = "data/images/val/raw-250110_dc_s001_b2_15.jpg"
     run_inference(model_dir, img_path)

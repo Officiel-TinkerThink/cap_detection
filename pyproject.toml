@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "ipykernel>=7.1.0",
+    "matplotlib>=3.10.7",
     "ncnn>=1.0.20250916",
     "opencv-contrib-python>=4.12.0.88",
     "typer>=0.20.0",

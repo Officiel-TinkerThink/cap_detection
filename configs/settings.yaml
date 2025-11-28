@@ -33,4 +33,4 @@ infer:
   project: "bottle_cap_detection/train_b8_ep500_im320/"
   name: predictions
   conf: 0.5
-  iou: 0.45
+  iou: 0.5
