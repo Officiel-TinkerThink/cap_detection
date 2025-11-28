@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install system dependencies + uv
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git curl && \
+    apt-get install -y --no-install-recommends git curl libgl1 libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/* && \
     curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -51,4 +51,3 @@ ENTRYPOINT ["bsort"]
 # Command to run when the container starts
 CMD ["infer", "--image", "./raw-250110_dc_s001_b2_15.jpg"]
 
-RUN echo "bsort successfully doing inference"
