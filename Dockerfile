@@ -43,12 +43,12 @@ COPY bsort ./bsort
 COPY configs ./configs
 COPY tools ./tools
 COPY scripts ./scripts
-COPY data ./data
+COPY raw-250110_dc_s001_b2_15.jpg ./raw-250110_dc_s001_b2_15.jpg
 
 # Entry point (same as original)
 ENTRYPOINT ["bsort"]
 
 # Command to run when the container starts
-CMD ["infer", "--image", "./data/images/val/raw-250110_dc_s001_b2_15.jpg"]
+CMD ["infer", "--image", "./raw-250110_dc_s001_b2_15.jpg"]
 
 RUN echo "bsort successfully doing inference"
