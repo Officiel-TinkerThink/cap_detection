@@ -95,11 +95,8 @@ if __name__ == "__main__":
         default="configs/settings.yaml",
         help="Path to config path",
     )
-    parser.add_argument(
-        "--project", type=str, default="cap_detection", help="Wandb project name"
-    )
     args = parser.parse_args()
-    trainer = Trainer(args.config_path, args.project)
+    trainer = Trainer(args.config_path)
     if args.name is None:
         raise ValueError("Train run name does not specified")
     trainer.train(args.name)
